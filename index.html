@@ -19,7 +19,7 @@
           type="text"
           id="fontNames"
           name="fontNames"
-          placeholder="e.g., Open Sans, Roboto, Arial"
+          placeholder="e.g., Open Sans, Roboto"
         />
         <button type="submit">Generate Link</button>
       </form>
@@ -35,9 +35,7 @@
           url: "data.json",
           dataType: "json",
           success: function (data) {
-            const fontNames = data.items.map(obj => obj.family);
-            // console.log(names);
-            // var availableFonts = data.fonts;
+            const fontNames = data.items.map((obj) => obj.family);
             $("#fontNames").autocomplete({
               source: fontNames,
             });
@@ -64,6 +62,7 @@
           return font.trim();
         });
         var link = document.createElement("p");
+        link.setAttribute("id", "copy_me");
         var fontUrl = fontArray
           .map(function (font) {
             return font.replaceAll(" ", "+");
@@ -72,6 +71,17 @@
         link.textContent = `@import url('https://fonts.googleapis.com/css?family=${fontUrl}');`;
         linkContainer.innerHTML = "";
         linkContainer.appendChild(link);
+
+        link.addEventListener("click", function () {
+          var range = document.createRange();
+          var selection = window.getSelection();
+          range.selectNodeContents(link);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          setTimeout(() => {
+            alert("Copied to clipboard");
+          }, 100);
+        });
       }
     </script>
   </body>
