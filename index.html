@@ -78,9 +78,13 @@
           range.selectNodeContents(link);
           selection.removeAllRanges();
           selection.addRange(range);
-          setTimeout(() => {
-            alert("Copied to clipboard");
-          }, 100);
+
+          navigator.clipboard.writeText(link.innerText).then(function() {
+            alert('Copied to clipboard');
+          }, function(error) {
+            alert('Could not copy to clipboard');
+          });
+          
         });
       }
     </script>
