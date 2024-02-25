@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Font Link Generator</title>
+    <link
+      rel="stylesheet"
+      href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Google Font Link Generator</h1>
+      <form id="fontForm">
+        <label for="fontNames">Enter Google Font Names:</label>
+        <input
+          type="text"
+          id="fontNames"
+          name="fontNames"
+          placeholder="e.g., Open Sans, Roboto, Arial"
+        />
+        <button type="submit">Generate Link</button>
+      </form>
+      <div id="linkContainer"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+      $(function () {
+        $.ajax({
+          url: "data.json",
+          dataType: "json",
+          success: function (data) {
+            const fontNames = data.items.map(obj => obj.family);
+            // console.log(names);
+            // var availableFonts = data.fonts;
+            $("#fontNames").autocomplete({
+              source: fontNames,
+            });
+          },
+          error: function (xhr, status, error) {
+            console.error("Error loading font data:", status, error);
+          },
+        });
+      });
+
+      document
+        .getElementById("fontForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          var fontNames = document.getElementById("fontNames").value.trim();
+          if (fontNames !== "") {
+            generateFontLink(fontNames);
+          }
+        });
+
+      function generateFontLink(fontNames) {
+        var linkContainer = document.getElementById("linkContainer");
+        var fontArray = fontNames.split(",").map(function (font) {
+          return font.trim();
+        });
+        var link = document.createElement("p");
+        var fontUrl = fontArray
+          .map(function (font) {
+            return font.replaceAll(" ", "+");
+          })
+          .join("|");
+        link.textContent = `@import url('https://fonts.googleapis.com/css?family=${fontUrl}');`;
+        linkContainer.innerHTML = "";
+        linkContainer.appendChild(link);
+      }
+    </script>
+  </body>
+</html>
